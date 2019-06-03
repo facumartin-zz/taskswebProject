@@ -18,6 +18,7 @@
     <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table-locale-all.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/extensions/export/bootstrap-table-export.min.js"></script>
+
     <body>
     <style>
       .select,
@@ -36,7 +37,7 @@
         <a class="nav-link active" href="#">Users</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Projects</a>
+        <a class="nav-link" href="/kanban">kanban</a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Tasks</a>
@@ -310,8 +311,9 @@
 
       $('#addtaskbutton').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
-        onlycallpost();
+        onlycallpost("http://localhost:5000/add");
         console.log("adding");
+        $table.bootstrapTable('refresh', {url: "http://localhost:5000/users"})
       });
 
 
@@ -331,18 +333,15 @@
       	alert(json["user_id"]); //
         var apiurl="http://localhost:5000/delete/"+json["user_id"];
         onlycallget(apiurl);
+        $table.bootstrapTable('refresh', {url: "http://localhost:5000/users"})
       });
 
-      $('modifyRow').on('click', function(event) {
+      $('#modifyRow').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
-        console.log("deleting");
-        console.log($table.bootstrapTable('getSelections'));
-
-        var json = ($table.bootstrapTable('getSelections')[0]);
-
-      	alert(json["user_id"]); //
-        var apiurl="http://localhost:5000/delete/"+json["user_id"];
-        onlycallget(apiurl);
+        console.log("modifying");
+        var apiurl="http://localhost:5000/update";
+        onlycallpost(apiurl);
+        $table.bootstrapTable('refresh', {url: "http://localhost:5000/users"})
       });
 
 
@@ -365,11 +364,11 @@
 
             <div class="form-group">
               <label for="exampleInputPassword1">name</label>
-              <input type="text" name='name' class="form-control" id="inputName" placeholder="name">
+              <input type="text" name='name' class="form-control" id="inputName" placeholder="">
               <label for="exampleInputEmail">Email address</label>
-              <input type="email" name='email' class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email">
+              <input type="email" name='email' class="form-control" id="inputEmail" aria-describedby="emailHelp">
               <label for="exampleInputPassword1">pwd</label>
-              <input type="password" name='pwd' class="form-control" id="inputPass" placeholder="pwd">
+              <input type="password" name='pwd' class="form-control" id="inputPass" placeholder="">
               <small id="emailHelp" class="form-text text-muted">We never share your email with anyone else.</small>
             </div>
             <div class="form-group form-check">
@@ -406,9 +405,16 @@
     var name= document.getElementById("inputName").value;
     var email= document.getElementById("inputEmail").value;
     var pass= "1234";
-    console.log(document.getElementById("inputName").value);
-    console.log(document.getElementById("inputEmail").value);
-    xhr.send('{"name":"'+name+'","email":"'+email+'","pwd":"'+pass+'"}');
+    if (url == "http://localhost:5000/update"){
+      var json = ($table.bootstrapTable('getSelections')[0]);
+      var id=json["user_id"];
+      console.log(document.getElementById("inputName").value);
+      console.log(document.getElementById("inputEmail").value);
+      xhr.send('{"name":"'+name+'","id":"'+id+'","email":"'+email+'","pwd":"'+pass+'"}');
+      }
+    else{
+      xhr.send('{"name":"'+name+'","email":"'+email+'","pwd":"'+pass+'"}');
+  }
   };
   function onlycallpost(apiurl){
           postJSON(apiurl,  function(err, dataset) {
@@ -463,5 +469,7 @@
           }
         })};
           </script>
+
+
 </body>
 </html>

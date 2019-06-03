@@ -10,20 +10,7 @@ from werkzeug import generate_password_hash, check_password_hash
 # Set the secret key to some random bytes. Keep this really secret!
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
-@app.route('/verify')
-def index():
-    if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
-    return 'You are not logged in'
 
-
-
-
-@app.route('/logout')
-def logout():
-    # remove the username from the session if it's there
-    session.pop('username', None)
-    return redirect(url_for('index'))
 
 @app.route('/add', methods=['POST'])
 def add_user():
@@ -77,6 +64,10 @@ def users():
 		cursor.close()
 		conn.close()
 
+@app.route('/kanban', methods=['GET'])
+def kanbanBoard():
+    return render_template('kanban.html')
+
 @app.route('/user/<id>')
 def user(id):
 	try:
@@ -93,6 +84,8 @@ def user(id):
 	finally:
 		cursor.close()
 		conn.close()
+
+
 
 @app.route('/update', methods=['POST'])
 def update_user():
