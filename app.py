@@ -21,7 +21,7 @@ def do_admin_login():
         session['logged_in'] = True
     else:
         flash('wrong password!')
-    return render_template('index.html')
+    return render_template('login.hml')
 
 @app.route('/logout', methods=['GET'])
 def do_admin_logout():

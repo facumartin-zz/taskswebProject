@@ -66,7 +66,18 @@ def users():
 
 @app.route('/kanban', methods=['GET'])
 def kanbanBoard():
-    return render_template('kanban.html')
+	"""Render Homepage/Kanban board"""
+	tasks = db.session.query(Task).filter(Task.username==session.get('username'))
+	to_do, doing, done = [],[],[]
+	tasks=[]
+	for task in tasks:
+	    if task.status == 'to_do':
+	        to_do.append(task)
+	    elif task.status == 'doing':
+	        doing.append(task)
+	    elif task.status == 'done':
+	        done.append(task)
+	return render_template('kanban.html', to_do=to_do, doing=doing, done=done, user=session.get('username'))
 
 @app.route('/user/<id>')
 def user(id):
